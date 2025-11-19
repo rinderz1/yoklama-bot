@@ -32,26 +32,46 @@ def get_database_connection() -> Generator[sqlite3.Connection, None, None]:
 class DatabaseGateway:
     connection: sqlite3.Connection
 
+    def get_user_by_id(self, user_id: int) -> UserWithCredentials | None:
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """
+            SELECT id, student_number, password
+            FROM users
+            WHERE id = ?;
+            """,
+            (user_id,),
+        )
+        row = cursor.fetchone()
+        if row is None:
+            return None
+        if row[1] is None or row[2] is None:
+            return None
+        return UserWithCredentials(
+            id=row[0],
+            student_number=row[1],
+            password=row[2],
+        )
+
     def get_users_with_credentials(self) -> list[UserWithCredentials]:
-        with self.connection:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                """
-                SELECT id, student_number, password
-                FROM users
-                WHERE student_number IS NOT NULL
-                  AND password IS NOT NULL;
-                """,
+        cursor = self.connection.cursor()
+        cursor.execute(
+            """
+            SELECT id, student_number, password
+            FROM users
+            WHERE student_number IS NOT NULL
+              AND password IS NOT NULL;
+            """,
+        )
+        rows = cursor.fetchall()
+        return [
+            UserWithCredentials(
+                id=row[0],
+                student_number=row[1],
+                password=row[2],
             )
-            rows = cursor.fetchall()
-            return [
-                UserWithCredentials(
-                    id=row[0],
-                    student_number=row[1],
-                    password=row[2],
-                )
-                for row in rows
-            ]
+            for row in rows
+        ]
 
     def init_tables(self) -> None:
         with self.connection:
@@ -160,18 +180,17 @@ class DatabaseGateway:
             )
 
     def get_lessons(self, user_id: int) -> list[Lesson]:
-        with self.connection:
-            cursor = self.connection.cursor()
-            cursor.execute(
-                "SELECT name, theory_skipped_classes_percentage, practice_skipped_classes_percentage FROM lessons WHERE user_id = ?",
-                (user_id,),
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "SELECT name, theory_skipped_classes_percentage, practice_skipped_classes_percentage FROM lessons WHERE user_id = ?",
+            (user_id,),
+        )
+        rows = cursor.fetchall()
+        return [
+            Lesson(
+                name=row[0],
+                theory_skipped_classes_percentage=row[1],
+                practice_skipped_classes_percentage=row[2],
             )
-            rows = cursor.fetchall()
-            return [
-                Lesson(
-                    name=row[0],
-                    theory_skipped_classes_percentage=row[1],
-                    practice_skipped_classes_percentage=row[2],
-                )
-                for row in rows
-            ]
+            for row in rows
+        ]
