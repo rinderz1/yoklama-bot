@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -9,8 +10,12 @@ from handlers import router
 
 
 load_dotenv()
+# Просто вставь свой токен прямо сюда в кавычки:
+TELEGRAM_BOT_TOKEN = "8079601014:AAHI01Rc18KqM4hhs_ux8lRD2CRysxNMx28"
 
-TELEGRAM_BOT_TOKEN = ""
+# Проверка (можно оставить)
+if not TELEGRAM_BOT_TOKEN:
+    raise RuntimeError("Токен пустой! Вставь его в код.")
 
 
 async def main() -> None:

@@ -208,13 +208,16 @@ class ObisClient:
         lessons: list[Lesson] = []
         for table_row in table_rows:
             tds = table_row.find_all("td")
-            if len(tds) != 8:
+            # Some table rows may have slightly different structure — be tolerant.
+            if len(tds) < 3:
                 continue
-            lesson_name = tds[2].text.strip()
-            theory_lessons_skipped_classes_percentage = tds[4].text.strip("% ")
-            practice_lessons_skipped_classes_percentage = tds[6].text.strip(
-                "% ",
-            )
+            lesson_name = tds[2].text.strip() if len(tds) > 2 else ""
+
+            def td_text(i: int) -> str:
+                return tds[i].text.strip("% ").strip() if len(tds) > i else ""
+
+            theory_lessons_skipped_classes_percentage = td_text(4)
+            practice_lessons_skipped_classes_percentage = td_text(6)
 
             lesson = Lesson(
                 name=lesson_name,

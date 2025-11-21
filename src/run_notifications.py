@@ -1,6 +1,10 @@
 import asyncio
+import os
 
 import httpx
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from database_gateway import (
     DatabaseGateway, get_database_connection,
@@ -57,7 +61,7 @@ async def main():
 
             for old_lesson, new_lesson in changed_lessons:
                 send_message_to_telegram(
-                    bot_token="",
+                    bot_token=os.getenv("TELEGRAM_BOT_TOKEN"),
                     chat_id=user.id,
                     old_lesson=old_lesson,
                     new_lesson=new_lesson,
