@@ -1,4 +1,32 @@
-﻿.env
+@'
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv
+.venv/
+env/
+venv/
+
+# dotenv files and credentials
+.env
+src/.env
+
+# Database
+database.db
+
+# IDE/editor
+.vscode/
+.idea/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+'@ | Out-File -Encoding utf8 .gitignore
+.env
 src/.env
 database.db
 .venv/
