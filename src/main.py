@@ -10,12 +10,12 @@ from handlers import router
 
 
 load_dotenv()
-# Просто вставь свой токен прямо сюда в кавычки:
-TELEGRAM_BOT_TOKEN = "8079601014:AAHI01Rc18KqM4hhs_ux8lRD2CRysxNMx28"
-
-# Проверка (можно оставить)
+# Read token from environment or .env file
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
-    raise RuntimeError("Токен пустой! Вставь его в код.")
+    raise RuntimeError(
+        "TELEGRAM_BOT_TOKEN is not set. Add it to a .env file or set the environment variable."
+    )
 
 
 async def main() -> None:
