@@ -133,6 +133,7 @@ async def on_obis_password_entered(
     student_number = data.get("student_number")
     obis_password = message.text
     await state.clear()
+    await message.delete()
 
     async with create_http_client() as http_client:
         obis_client = ObisClient(
